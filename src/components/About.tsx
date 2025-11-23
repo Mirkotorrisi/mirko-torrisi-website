@@ -1,5 +1,3 @@
-'use client';
-
 import { Section } from '@/types/contentful';
 import {
   documentToReactComponents,
