@@ -53,9 +53,8 @@ export default function Hero() {
           gridSize={8}
           maxAngle={60}
           radius={4}
-          borderStyle="2px dashed #5227FF"
-          faceColor="#1a1a2e"
-          rippleColor="#ff6b6b"
+          faceColor="#00011199"
+          rippleColor="#ff6b6b99"
           rippleSpeed={1.5}
           autoAnimate={true}
           rippleOnClick={true}
@@ -73,7 +72,7 @@ export default function Hero() {
           MIRKO TORRISI
         </h1>
         <p className="mt-4 text-xl font-light tracking-widest uppercase opacity-80 md:text-2xl">
-          Creative Developer
+          FULL STACK DEVELOPER
         </p>
       </div>
     </section>

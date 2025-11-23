@@ -25,11 +25,13 @@ export type ContentfulAsset = {
 
 export interface JobFields {
   companyName: string;
-  description: string[];
+  description: Document;
   period: string;
 }
 
-export type JobSkeleton = EntrySkeletonType<JobFields> & { contentTypeId: 'job' };
+export type JobSkeleton = EntrySkeletonType<JobFields> & {
+  contentTypeId: 'job';
+};
 
 export type Job = {
   sys: { id: string };
@@ -43,7 +45,9 @@ export interface WorkFields {
   image: ContentfulAsset;
 }
 
-export type WorkSkeleton = EntrySkeletonType<WorkFields> & { contentTypeId: 'work' };
+export type WorkSkeleton = EntrySkeletonType<WorkFields> & {
+  contentTypeId: 'work';
+};
 
 export type Work = {
   sys: { id: string };
@@ -57,7 +61,9 @@ export interface SectionFields {
   image: ContentfulAsset;
 }
 
-export type SectionSkeleton = EntrySkeletonType<SectionFields> & { contentTypeId: 'section' };
+export type SectionSkeleton = EntrySkeletonType<SectionFields> & {
+  contentTypeId: 'section';
+};
 
 export type Section = {
   sys: { id: string };
@@ -69,7 +75,9 @@ export interface ContactFields {
   linkTo: string;
 }
 
-export type ContactSkeleton = EntrySkeletonType<ContactFields> & { contentTypeId: 'contact' };
+export type ContactSkeleton = EntrySkeletonType<ContactFields> & {
+  contentTypeId: 'contact';
+};
 
 export type Contact = {
   sys: { id: string };

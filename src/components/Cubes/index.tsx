@@ -383,31 +383,9 @@ const Cubes: React.FC<CubesProps> = ({
                 className="cube-face absolute inset-0 flex items-center justify-center"
                 style={{
                   background: 'var(--cube-face-bg)',
-                  // border: 'var(--cube-face-border)', // Removed in favor of drop-shadow
-                  boxShadow: 'var(--cube-face-shadow)',
-                  filter:
-                    'drop-shadow(0 0 2px rgba(100, 200, 255, var(--proximity)))',
-                  clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
-                }}
-              />
-              <div
-                className="cube-face absolute inset-0 flex items-center justify-center"
-                style={{
-                  background: 'var(--cube-face-bg)',
                   //   border: 'var(--cube-face-border)',
                   boxShadow: 'var(--cube-face-shadow)',
                   transform: 'translateX(-50%) rotateY(-90deg)',
-                  filter:
-                    'drop-shadow(0 0 2px rgba(100, 200, 255, var(--proximity)))',
-                }}
-              />
-              <div
-                className="cube-face absolute inset-0 flex items-center justify-center"
-                style={{
-                  background: 'var(--cube-face-bg)',
-                  //   border: 'var(--cube-face-border)',
-                  boxShadow: 'var(--cube-face-shadow)',
-                  transform: 'translateX(50%) rotateY(90deg)',
                   filter:
                     'drop-shadow(0 0 2px rgba(100, 200, 255, var(--proximity)))',
                 }}
