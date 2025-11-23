@@ -16,32 +16,52 @@ export default function Curriculum({ jobs }: { jobs: Job[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  useEffect(() => {
-    cardsRef.current.forEach((card, index) => {
-      if (!card) return;
+  const sortedJobs = [...jobs].sort((a, b) => {
+    const getEndYear = (period: string) => {
+      const lowerPeriod = period.toLowerCase();
+      if (lowerPeriod.includes('today') || lowerPeriod.includes('ongoing')) {
+        return 9999;
+      }
+      const parts = period.split('-');
+      if (parts.length > 1) {
+        return parseInt(parts[1].trim(), 10);
+      }
+      return parseInt(period.trim(), 10);
+    };
 
-      gsap.fromTo(
-        card,
-        {
-          opacity: 0.2,
-          scale: 0.9,
-          filter: 'blur(5px)',
-        },
-        {
-          opacity: 1,
-          scale: 1,
-          filter: 'blur(0px)',
-          duration: 0.5,
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 80%',
-            end: 'top 50%',
-            scrub: true,
-            toggleActions: 'play reverse play reverse',
+    return getEndYear(b.fields.period) - getEndYear(a.fields.period);
+  });
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (!containerRef.current) return;
+
+      const cards = containerRef.current.children;
+
+      Array.from(cards).forEach((card, index) => {
+        gsap.fromTo(
+          card,
+          {
+            opacity: 0,
+            y: 50,
           },
-        }
-      );
-    });
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+            },
+            delay: index * 0.1,
+          }
+        );
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
   }, [jobs]);
 
   const options: Options = {
@@ -70,7 +90,7 @@ export default function Curriculum({ jobs }: { jobs: Job[] }) {
           Curriculum
         </h2>
         <div ref={containerRef} className="mx-auto max-w-3xl space-y-12">
-          {jobs.map((job, index) => (
+          {sortedJobs.map((job, index) => (
             <div
               key={job.sys.id}
               ref={(el) => {
