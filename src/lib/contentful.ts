@@ -286,11 +286,6 @@ export async function getPageData(): Promise<PageData> {
   }
 
   try {
-    // In a real scenario, you'd probably fetch specific content types
-    // For now, we'll just simulate fetching all and mapping them
-    // This is a simplification. You would typically have separate fetch functions.
-
-    // Example of how you might fetch if you had the credentials
     const jobs = await client.getEntries<JobSkeleton>({ content_type: 'job' });
     const works = await client.getEntries<WorkSkeleton>({
       content_type: 'work',
@@ -302,9 +297,6 @@ export async function getPageData(): Promise<PageData> {
       works: works.items as unknown as Work[],
       contacts: mockData.contacts,
     };
-
-    // Returning mock data even if client exists for now as we don't have real content types set up in the user's space yet
-    return mockData;
   } catch (error) {
     console.error('Error fetching data from Contentful:', error);
     return mockData;
