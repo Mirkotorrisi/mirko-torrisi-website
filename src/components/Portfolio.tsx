@@ -65,23 +65,23 @@ export default function Portfolio({ works }: { works: Work[] }) {
           {works.map((work) => (
             <div
               key={work.sys.id}
-              className="group relative h-[70vh] w-[600px] shrink-0 overflow-hidden rounded-3xl bg-gray-100"
+              className="group relative h-[450px] w-[350px] shrink-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm transition-all duration-500 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10"
             >
-              {/* Image Placeholder - In real app use work.fields.image.fields.file.url */}
-              <div className="absolute inset-0 bg-gray-300 transition-transform duration-700 group-hover:scale-105">
-                {/* Using a placeholder image if the URL is mock or invalid, otherwise use Next Image */}
+              <div className="absolute inset-0 flex items-center justify-center p-16 transition-transform duration-700 group-hover:scale-110">
                 <img
                   src={work.fields.image.fields.file.url}
                   alt={work.fields.title}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain drop-shadow-2xl filter transition-all duration-500 group-hover:drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]"
                 />
               </div>
 
-              <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/80 via-transparent to-transparent p-8 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <h3 className="mb-2 text-3xl font-bold">{work.fields.title}</h3>
+              <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/90 via-black/40 to-transparent p-8 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <h3 className="mb-4 text-2xl font-bold text-white">
+                  {work.fields.title}
+                </h3>
                 <button
                   onClick={() => setSelectedProject(work)}
-                  className="inline-block w-fit cursor-pointer rounded-full bg-white px-6 py-2 font-medium text-black transition-colors hover:bg-blue-500 hover:text-white"
+                  className="w-full rounded-xl bg-white py-3 text-sm font-bold text-black transition-transform hover:scale-105 hover:cursor-pointer active:scale-95"
                 >
                   View Project
                 </button>
