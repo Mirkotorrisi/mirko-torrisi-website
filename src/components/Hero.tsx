@@ -74,7 +74,7 @@ export default function Hero() {
           faceColor="#00011199"
           rippleColor="#ff6b6b99"
           rippleSpeed={1.5}
-          autoAnimate={!isMobile}
+          autoAnimate={true}
           rippleOnClick={!isMobile}
         />
       </div>

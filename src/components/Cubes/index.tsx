@@ -308,28 +308,31 @@ const Cubes: React.FC<CubesProps> = ({
     const el = sceneRef.current;
     if (!el) return;
 
-    // Only add event listeners if interactive features are enabled
-    if (!autoAnimate && !rippleOnClick) return;
+    // Add mouse/touch interactivity listeners only if rippleOnClick is enabled
+    // (autoAnimate runs independently via its own effect and doesn't need these)
+    if (rippleOnClick) {
+      el.addEventListener('pointermove', onPointerMove);
+      el.addEventListener('pointerleave', resetAll);
+      el.addEventListener('click', onClick);
 
-    el.addEventListener('pointermove', onPointerMove);
-    el.addEventListener('pointerleave', resetAll);
-    el.addEventListener('click', onClick);
-
-    el.addEventListener('touchmove', onTouchMove, { passive: false });
-    el.addEventListener('touchstart', onTouchStart, { passive: true });
-    el.addEventListener('touchend', onTouchEnd, { passive: true });
+      el.addEventListener('touchmove', onTouchMove, { passive: false });
+      el.addEventListener('touchstart', onTouchStart, { passive: true });
+      el.addEventListener('touchend', onTouchEnd, { passive: true });
+    }
 
     return () => {
-      el.removeEventListener('pointermove', onPointerMove);
-      el.removeEventListener('pointerleave', resetAll);
-      el.removeEventListener('click', onClick);
+      if (rippleOnClick) {
+        el.removeEventListener('pointermove', onPointerMove);
+        el.removeEventListener('pointerleave', resetAll);
+        el.removeEventListener('click', onClick);
 
-      el.removeEventListener('touchmove', onTouchMove);
-      el.removeEventListener('touchstart', onTouchStart);
-      el.removeEventListener('touchend', onTouchEnd);
+        el.removeEventListener('touchmove', onTouchMove);
+        el.removeEventListener('touchstart', onTouchStart);
+        el.removeEventListener('touchend', onTouchEnd);
 
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+        if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+        if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      }
     };
   }, [
     onPointerMove,
@@ -338,7 +341,6 @@ const Cubes: React.FC<CubesProps> = ({
     onTouchMove,
     onTouchStart,
     onTouchEnd,
-    autoAnimate,
     rippleOnClick,
   ]);
 
