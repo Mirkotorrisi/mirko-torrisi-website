@@ -307,6 +307,10 @@ const Cubes: React.FC<CubesProps> = ({
   useEffect(() => {
     const el = sceneRef.current;
     if (!el) return;
+
+    // Only add event listeners if interactive features are enabled
+    if (!autoAnimate && !rippleOnClick) return;
+
     el.addEventListener('pointermove', onPointerMove);
     el.addEventListener('pointerleave', resetAll);
     el.addEventListener('click', onClick);
@@ -327,7 +331,16 @@ const Cubes: React.FC<CubesProps> = ({
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     };
-  }, [onPointerMove, resetAll, onClick, onTouchMove, onTouchStart, onTouchEnd]);
+  }, [
+    onPointerMove,
+    resetAll,
+    onClick,
+    onTouchMove,
+    onTouchStart,
+    onTouchEnd,
+    autoAnimate,
+    rippleOnClick,
+  ]);
 
   const sceneStyle: React.CSSProperties = {
     gridTemplateColumns: `repeat(${columns}, 1fr)`,

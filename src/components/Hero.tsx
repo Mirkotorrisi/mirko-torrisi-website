@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import Cubes from './Cubes';
 
@@ -8,12 +8,30 @@ export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const circleRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 480);
+    };
+
+    // Check on mount
+    checkMobile();
+
+    // Check on resize
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
     const circle = circleRef.current;
 
     if (!container || !circle) return;
+
+    // Disable interactive features on mobile
+    if (isMobile) return;
 
     const moveCircle = (e: MouseEvent) => {
       gsap.to(circle, {
@@ -41,7 +59,7 @@ export default function Hero() {
     return () => {
       window.removeEventListener('mousemove', moveCircle);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <section
@@ -50,20 +68,22 @@ export default function Hero() {
     >
       <div className="absolute top-0 left-0 h-full w-full">
         <Cubes
-          gridSize={8}
+          gridSize={isMobile ? 4 : 8}
           maxAngle={60}
           radius={4}
           faceColor="#00011199"
           rippleColor="#ff6b6b99"
           rippleSpeed={1.5}
-          autoAnimate={true}
-          rippleOnClick={true}
+          autoAnimate={!isMobile}
+          rippleOnClick={!isMobile}
         />
       </div>
-      <div
-        ref={circleRef}
-        className="pointer-events-none absolute top-0 left-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500 opacity-50 mix-blend-screen blur-[100px]"
-      />
+      {!isMobile && (
+        <div
+          ref={circleRef}
+          className="pointer-events-none absolute top-0 left-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500 opacity-50 mix-blend-screen blur-[100px]"
+        />
+      )}
       <div className="z-10 p-4 text-center">
         <h1
           ref={textRef}
