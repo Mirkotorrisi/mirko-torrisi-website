@@ -24,7 +24,8 @@ import {
   SiJira,
   SiShadcnui,
 } from 'react-icons/si';
-import { ServerCog, BrainCircuit } from 'lucide-react';
+import { ServerCog, BrainCircuit, Bot } from 'lucide-react';
+import type { Dictionary } from '@/i18n/dictionaries';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -56,6 +57,7 @@ const techCategories = [
       { name: 'LangChain', icon: SiLangchain, color: '#1C3C3C' }, // Dark green/black
       { name: 'OpenAI API', icon: SiOpenai, color: '#412991' },
       { name: 'RAG', icon: BrainCircuit, color: '#FFD700' }, // Gold
+      { name: 'Claude Code & MCP', icon: Bot, color: '#D97757' },
     ],
   },
   {
@@ -77,7 +79,11 @@ const techCategories = [
   },
 ];
 
-export default function TechStack() {
+export default function TechStack({
+  dict,
+}: {
+  dict: Dictionary['techStack'];
+}) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -119,7 +125,7 @@ export default function TechStack() {
 
       <div className="mx-auto max-w-7xl">
         <h2 className="mb-16 bg-linear-to-r from-blue-400 to-white bg-clip-text text-center text-5xl font-bold text-transparent md:text-6xl">
-          Tech Stack
+          {dict.heading}
         </h2>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 lg:grid-cols-3">
@@ -132,7 +138,7 @@ export default function TechStack() {
               className="flex flex-col gap-6"
             >
               <h3 className="border-b border-zinc-800 pb-2 text-2xl font-semibold text-zinc-200">
-                {category.title}
+                {dict.categories[index] ?? category.title}
               </h3>
               <div className="flex flex-wrap gap-3">
                 {category.techs.map((tech) => (

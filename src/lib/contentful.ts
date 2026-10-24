@@ -5,11 +5,14 @@ import {
   Job,
   Work,
   Contact,
+  Testimonial,
   SectionSkeleton,
   JobSkeleton,
   WorkSkeleton,
-  ContactSkeleton,
+  TestimonialSkeleton,
 } from '@/types/contentful';
+import type { Locale } from '@/i18n/config';
+import { hasContent } from '@/lib/rich-text';
 import { Document, BLOCKS } from '@contentful/rich-text-types';
 import { SITE } from '@/lib/site';
 import { workSlug } from '@/lib/work-slug';
@@ -270,51 +273,181 @@ const mockData: PageData = {
       { sys: { id: 'contact-github' }, fields: { name: 'GitHub', linkTo: SITE.social.github } },
     ] as Contact[]
   ).filter((c) => Boolean(c.fields.linkTo)),
+  testimonials: [],
 };
 
-// Featured works first; the rest keep the order Contentful returns.
+// ---------------------------------------------------------------------------
+// Localisation. The Contentful space has one locale (en-US), so Italian copy
+// lives in parallel "*It" fields. For Italian pages we swap them in, falling
+// back to English wherever the Italian field is empty.
+// ---------------------------------------------------------------------------
+
+const pickText = (it: string | undefined, en: string | undefined) =>
+  it && it.trim() ? it : en;
+
+const pickDoc = <T extends Document | undefined>(
+  it: Document | undefined,
+  en: T
+): Document | T => (it && hasContent(it) ? it : en);
+
+export const localizeWork = (work: Work, locale: Locale): Work => {
+  if (locale !== 'it') return work;
+  const f = work.fields;
+  return {
+    ...work,
+    fields: {
+      ...f,
+      tagline: pickText(f.taglineIt, f.tagline),
+      role: pickText(f.roleIt, f.role),
+      period: pickText(f.periodIt, f.period),
+      description: pickDoc(f.descriptionIt, f.description),
+      caseStudy: pickDoc(f.caseStudyIt, f.caseStudy),
+      hindsight: pickDoc(f.hindsightIt, f.hindsight),
+    },
+  };
+};
+
+const localizeJob = (job: Job, locale: Locale): Job =>
+  locale === 'it'
+    ? {
+        ...job,
+        fields: {
+          ...job.fields,
+          description: pickDoc(job.fields.descriptionIt, job.fields.description),
+        },
+      }
+    : job;
+
+const localizeSection = (section: Section, locale: Locale): Section =>
+  locale === 'it'
+    ? {
+        ...section,
+        fields: {
+          ...section.fields,
+          title: pickText(section.fields.titleIt, section.fields.title) ?? '',
+          paragraph: pickDoc(
+            section.fields.paragraphIt,
+            section.fields.paragraph
+          ),
+        },
+      }
+    : section;
+
+const localizeTestimonial = (t: Testimonial, locale: Locale): Testimonial =>
+  locale === 'it'
+    ? {
+        ...t,
+        fields: {
+          ...t.fields,
+          quote: pickText(t.fields.quoteIt, t.fields.quote) ?? '',
+        },
+      }
+    : t;
+
+// Client work first, then agentic, then personal; featured ones lead each group.
+const CATEGORY_ORDER = { client: 0, agentic: 1, personal: 2 } as const;
 const sortWorks = (works: Work[]) =>
-  [...works].sort(
-    (a, b) => Number(!!b.fields.featured) - Number(!!a.fields.featured)
-  );
+  [...works].sort((a, b) => {
+    const featured = Number(!!b.fields.featured) - Number(!!a.fields.featured);
+    if (featured) return featured;
+    const ca = CATEGORY_ORDER[a.fields.category ?? 'personal'] ?? 3;
+    const cb = CATEGORY_ORDER[b.fields.category ?? 'personal'] ?? 3;
+    return ca - cb;
+  });
 
-export async function getWorks(): Promise<Work[]> {
-  if (!client) return sortWorks(mockData.works);
+// The Contentful SDK doesn't go through Next's fetch cache, so the raw
+// (English) works are memoised per process: one request per build.
+let worksPromise: Promise<Work[]> | null = null;
 
-  try {
-    const works = await client.getEntries<WorkSkeleton>({
-      content_type: 'work',
+const fetchWorks = (): Promise<Work[]> => {
+  if (!client) return Promise.resolve(sortWorks(mockData.works));
+  if (worksPromise) return worksPromise;
+
+  const request = client
+    .getEntries<WorkSkeleton>({ content_type: 'work', limit: 100 })
+    .then((res) => sortWorks(res.items as unknown as Work[]))
+    .catch((error) => {
+      console.error('Error fetching works from Contentful:', error);
+      worksPromise = null;
+      return sortWorks(mockData.works);
     });
-    return sortWorks(works.items as unknown as Work[]);
-  } catch (error) {
-    console.error('Error fetching works from Contentful:', error);
-    return sortWorks(mockData.works);
-  }
+  worksPromise = request;
+  return request;
+};
+
+export async function getWorks(locale: Locale = 'en'): Promise<Work[]> {
+  const works = await fetchWorks();
+  return works.map((w) => localizeWork(w, locale));
 }
 
-export async function getWorkBySlug(slug: string): Promise<Work | undefined> {
-  const works = await getWorks();
+export async function getWorkBySlug(
+  slug: string,
+  locale: Locale = 'en'
+): Promise<Work | undefined> {
+  const works = await getWorks(locale);
   return works.find((work) => workSlug(work) === slug);
 }
 
-export async function getPageData(): Promise<PageData> {
+async function getSections(): Promise<Section[]> {
+  if (!client) return mockData.sections;
+  try {
+    const res = await client.getEntries<SectionSkeleton>({
+      content_type: 'section',
+    });
+    const fromCms = res.items as unknown as Section[];
+    // Keep mock sections for ids not (yet) managed in Contentful.
+    const ids = new Set(fromCms.map((s) => s.fields.sectionId));
+    return [
+      ...fromCms,
+      ...mockData.sections.filter((s) => !ids.has(s.fields.sectionId)),
+    ];
+  } catch (error) {
+    console.error('Error fetching sections from Contentful:', error);
+    return mockData.sections;
+  }
+}
+
+async function getTestimonials(): Promise<Testimonial[]> {
+  if (!client) return [];
+  try {
+    const res = await client.getEntries<TestimonialSkeleton>({
+      content_type: 'testimonial',
+    });
+    return (res.items as unknown as Testimonial[]).sort(
+      (a, b) => (a.fields.order ?? 99) - (b.fields.order ?? 99)
+    );
+  } catch (error) {
+    console.error('Error fetching testimonials from Contentful:', error);
+    return [];
+  }
+}
+
+export async function getPageData(locale: Locale = 'en'): Promise<PageData> {
   if (!client) {
     console.warn('Contentful credentials not found, using mock data.');
-    return mockData;
   }
 
-  try {
-    const jobs = await client.getEntries<JobSkeleton>({ content_type: 'job' });
-    const works = await getWorks();
-
-    return {
-      sections: mockData.sections,
-      jobs: jobs.items as unknown as Job[],
-      works,
-      contacts: mockData.contacts,
-    };
-  } catch (error) {
-    console.error('Error fetching data from Contentful:', error);
-    return mockData;
+  let jobs: Job[] = mockData.jobs;
+  if (client) {
+    try {
+      const res = await client.getEntries<JobSkeleton>({ content_type: 'job' });
+      jobs = res.items as unknown as Job[];
+    } catch (error) {
+      console.error('Error fetching jobs from Contentful:', error);
+    }
   }
+
+  const [works, sections, testimonials] = await Promise.all([
+    getWorks(locale),
+    getSections(),
+    getTestimonials(),
+  ]);
+
+  return {
+    sections: sections.map((s) => localizeSection(s, locale)),
+    jobs: jobs.map((j) => localizeJob(j, locale)),
+    works,
+    contacts: mockData.contacts,
+    testimonials: testimonials.map((t) => localizeTestimonial(t, locale)),
+  };
 }

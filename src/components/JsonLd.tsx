@@ -1,7 +1,10 @@
 import { SITE, sameAs } from '@/lib/site';
+import { Locale, localePath } from '@/i18n/config';
+import { getDictionary } from '@/i18n/dictionaries';
 
 // Structured data so Google understands who this site is about and what is offered.
-export default function JsonLd() {
+export default function JsonLd({ lang }: { lang: Locale }) {
+  const { meta, services } = getDictionary(lang);
   const data = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -29,6 +32,8 @@ export default function JsonLd() {
           'PostgreSQL',
           'Redis',
           'Docker',
+          'AI agents',
+          'Model Context Protocol (MCP)',
         ],
         ...(sameAs.length ? { sameAs } : {}),
       },
@@ -36,11 +41,23 @@ export default function JsonLd() {
         '@type': 'ProfessionalService',
         '@id': `${SITE.url}/#service`,
         name: `${SITE.name} – ${SITE.jobTitle}`,
-        description: SITE.description,
-        url: SITE.url,
-        image: `${SITE.url}/opengraph-image`,
+        description: meta.description,
+        url: `${SITE.url}${localePath(lang)}`,
+        image: `${SITE.url}${localePath(lang)}/opengraph-image`,
         founder: { '@id': `${SITE.url}/#person` },
         areaServed: ['IT', 'Europe'],
+        hasOfferCatalog: {
+          '@type': 'OfferCatalog',
+          name: services.heading,
+          itemListElement: services.items.map((item) => ({
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: item.title,
+              description: item.body,
+            },
+          })),
+        },
         address: {
           '@type': 'PostalAddress',
           addressLocality: SITE.city,
@@ -53,7 +70,7 @@ export default function JsonLd() {
         '@id': `${SITE.url}/#website`,
         url: SITE.url,
         name: SITE.name,
-        inLanguage: 'en',
+        inLanguage: ['it', 'en'],
         publisher: { '@id': `${SITE.url}/#person` },
       },
     ],

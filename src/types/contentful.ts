@@ -26,6 +26,7 @@ export type ContentfulAsset = {
 export interface JobFields {
   companyName: string;
   description: Document;
+  descriptionIt?: Document;
   period: string;
 }
 
@@ -55,6 +56,14 @@ export interface WorkFields {
   repoUrl?: string;
   caseStudy?: Document;
   hindsight?: Document;
+  // Italian variants (the space has a single Contentful locale, so Italian
+  // lives in parallel fields; empty ones fall back to English).
+  taglineIt?: string;
+  roleIt?: string;
+  periodIt?: string;
+  descriptionIt?: Document;
+  caseStudyIt?: Document;
+  hindsightIt?: Document;
 }
 
 export type WorkSkeleton = EntrySkeletonType<WorkFields> & {
@@ -62,7 +71,7 @@ export type WorkSkeleton = EntrySkeletonType<WorkFields> & {
 };
 
 export type Work = {
-  sys: { id: string };
+  sys: { id: string; updatedAt?: string };
   fields: WorkFields;
 };
 
@@ -70,7 +79,9 @@ export interface SectionFields {
   title: string;
   sectionId: string;
   paragraph: Document;
-  image: ContentfulAsset;
+  titleIt?: string;
+  paragraphIt?: Document;
+  image?: ContentfulAsset;
 }
 
 export type SectionSkeleton = EntrySkeletonType<SectionFields> & {
@@ -96,9 +107,27 @@ export type Contact = {
   fields: ContactFields;
 };
 
+export interface TestimonialFields {
+  author: string;
+  role?: string;
+  quote: string;
+  quoteIt?: string;
+  order?: number;
+}
+
+export type TestimonialSkeleton = EntrySkeletonType<TestimonialFields> & {
+  contentTypeId: 'testimonial';
+};
+
+export type Testimonial = {
+  sys: { id: string };
+  fields: TestimonialFields;
+};
+
 export type PageData = {
   sections: Section[];
   jobs: Job[];
   works: Work[];
   contacts: Contact[];
+  testimonials: Testimonial[];
 };

@@ -1,110 +1,85 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ArrowUpRight } from 'lucide-react';
 import { Work } from '@/types/contentful';
+import type { Dictionary } from '@/i18n/dictionaries';
+import { Locale, localePath } from '@/i18n/config';
 import { assetUrl, workSlug } from '@/lib/work-slug';
 
-gsap.registerPlugin(ScrollTrigger);
+type Props = {
+  lang: Locale;
+  dict: Dictionary['works'];
+  works: Work[];
+};
 
-export default function Portfolio({ works }: { works: Work[] }) {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    const trigger = triggerRef.current;
-
-    if (!section || !trigger) return;
-
-    // Calculate the total width of the horizontal scroll
-    // We want to scroll the width of the section minus the viewport width
-    const getScrollAmount = () => -(section.scrollWidth - window.innerWidth);
-
-    const tween = gsap.to(section, {
-      x: getScrollAmount,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: trigger,
-        start: 'top top',
-        end: () => `+=${section.scrollWidth - window.innerWidth}`,
-        pin: true,
-        scrub: 1,
-        invalidateOnRefresh: true,
-      },
-    });
-
-    return () => {
-      tween.kill();
-    };
-  }, [works]);
-
+export default function Portfolio({ lang, dict, works }: Props) {
   return (
-    <>
-      <section
-        ref={triggerRef}
-        className="overflow-hidden bg-zinc-950 text-white"
-      >
-        <div
-          ref={sectionRef}
-          className="flex h-screen w-fit items-center gap-12 px-12"
-        >
-          <div className="w-[400px] shrink-0 pr-12">
-            <h2 className="text-6xl leading-tight font-bold">
-              Selected
-              <br />
-              Works
-            </h2>
-            <p className="mt-4 text-xl text-gray-400">
-              A collection of my recent projects and experiments.
-            </p>
-          </div>
+    <section
+      id="works"
+      className="scroll-mt-20 bg-zinc-950 px-4 py-24 text-white md:px-8"
+    >
+      <div className="mx-auto max-w-7xl">
+        <h2 className="bg-linear-to-r from-blue-400 to-white bg-clip-text text-center text-5xl font-bold text-transparent md:text-6xl">
+          {dict.heading}
+        </h2>
+        <p className="mx-auto mt-6 max-w-2xl text-center text-lg text-zinc-400">
+          {dict.intro}
+        </p>
 
+        <ul className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {works.map((work) => {
             const image = assetUrl(work.fields.image?.fields?.file?.url);
+            const category = work.fields.category;
 
             return (
-              <div
-                key={work.sys.id}
-                style={
-                  { '--card-image': `url("${image}")` } as React.CSSProperties
-                }
-                className="group relative isolate h-[450px] w-[350px] shrink-0 before:absolute before:inset-3 before:-z-10 before:rounded-2xl before:bg-(image:--card-image) before:bg-cover before:bg-center before:opacity-50 before:blur-2xl before:saturate-200 before:transition-all before:duration-500 before:content-[''] hover:before:inset-0 hover:before:opacity-80"
-              >
-                <div className="absolute inset-0 overflow-hidden rounded-2xl border border-white/10 bg-zinc-900">
-                  <img
-                    src={image}
-                    alt={work.fields.title}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+              <li key={work.sys.id}>
+                {/* The whole card is the link, so it works on touch screens too. */}
+                <Link
+                  href={localePath(lang, `/works/${workSlug(work)}`)}
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10"
+                >
+                  <div className="relative aspect-video overflow-hidden bg-zinc-900">
+                    {image && (
+                      <Image
+                        src={image}
+                        alt={work.fields.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    )}
+                    {category && (
+                      <span className="absolute top-3 left-3 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-zinc-200 backdrop-blur-sm">
+                        {dict.categories[category]}
+                      </span>
+                    )}
+                  </div>
 
-                  <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/90 via-black/40 to-transparent p-8 transition-colors duration-300 group-hover:from-black/95 group-hover:via-black/60">
-                    <h3 className="mb-2 text-2xl font-bold text-white">
+                  <div className="flex flex-1 flex-col p-6">
+                    <h3 className="text-xl font-bold text-white">
                       {work.fields.title}
                     </h3>
                     {work.fields.tagline && (
-                      <p className="mb-4 text-sm text-zinc-300">
+                      <p className="mt-2 text-sm leading-relaxed text-zinc-400">
                         {work.fields.tagline}
                       </p>
                     )}
-                    <Link
-                      href={`/works/${workSlug(work)}`}
-                      className="block w-full translate-y-2 rounded-xl bg-white py-3 text-center text-sm font-bold text-black opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 hover:scale-105 active:scale-95"
-                    >
-                      View Project
-                    </Link>
+                    {work.fields.stack && work.fields.stack.length > 0 && (
+                      <p className="mt-4 text-xs text-zinc-500">
+                        {work.fields.stack.slice(0, 4).join(' · ')}
+                      </p>
+                    )}
+                    <span className="mt-auto inline-flex items-center gap-1 pt-6 text-sm font-semibold text-blue-400 group-hover:text-blue-300">
+                      {dict.view}
+                      <ArrowUpRight className="h-4 w-4" aria-hidden />
+                    </span>
                   </div>
-                </div>
-              </div>
+                </Link>
+              </li>
             );
           })}
-
-          {/* Spacer for end of scroll */}
-          <div className="w-[20vw]" />
-        </div>
-      </section>
-    </>
+        </ul>
+      </div>
+    </section>
   );
 }
