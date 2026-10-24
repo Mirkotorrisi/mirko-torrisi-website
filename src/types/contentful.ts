@@ -38,11 +38,23 @@ export type Job = {
   fields: JobFields;
 };
 
+export type WorkCategory = 'agentic' | 'client' | 'personal';
+
 export interface WorkFields {
   title: string;
   link: string;
   description: Document;
-  image: ContentfulAsset;
+  image?: ContentfulAsset;
+  slug?: string;
+  tagline?: string;
+  category?: WorkCategory;
+  featured?: boolean;
+  role?: string;
+  period?: string;
+  stack?: string[];
+  repoUrl?: string;
+  caseStudy?: Document;
+  hindsight?: Document;
 }
 
 export type WorkSkeleton = EntrySkeletonType<WorkFields> & {
