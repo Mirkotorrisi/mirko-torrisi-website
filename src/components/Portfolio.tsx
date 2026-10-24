@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Work } from '@/types/contentful';
-import ProjectModal from './ProjectModal';
+import { assetUrl, workSlug } from '@/lib/work-slug';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Portfolio({ works }: { works: Work[] }) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
-  const [selectedProject, setSelectedProject] = useState<Work | null>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -69,7 +69,7 @@ export default function Portfolio({ works }: { works: Work[] }) {
             >
               <div className="absolute inset-0 flex items-center justify-center p-16 transition-transform duration-700 group-hover:scale-110">
                 <img
-                  src={work.fields.image.fields.file.url}
+                  src={assetUrl(work.fields.image?.fields?.file?.url)}
                   alt={work.fields.title}
                   className="h-full w-full object-contain drop-shadow-2xl filter transition-all duration-500 group-hover:drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]"
                 />
@@ -79,12 +79,17 @@ export default function Portfolio({ works }: { works: Work[] }) {
                 <h3 className="mb-4 text-2xl font-bold text-white">
                   {work.fields.title}
                 </h3>
-                <button
-                  onClick={() => setSelectedProject(work)}
-                  className="w-full rounded-xl bg-white py-3 text-sm font-bold text-black transition-transform hover:scale-105 hover:cursor-pointer active:scale-95"
+                {work.fields.tagline && (
+                  <p className="mb-4 text-sm text-zinc-300">
+                    {work.fields.tagline}
+                  </p>
+                )}
+                <Link
+                  href={`/works/${workSlug(work)}`}
+                  className="block w-full rounded-xl bg-white py-3 text-center text-sm font-bold text-black transition-transform hover:scale-105 active:scale-95"
                 >
                   View Project
-                </button>
+                </Link>
               </div>
             </div>
           ))}
@@ -93,12 +98,6 @@ export default function Portfolio({ works }: { works: Work[] }) {
           <div className="w-[20vw]" />
         </div>
       </section>
-
-      <ProjectModal
-        isOpen={!!selectedProject}
-        onClose={() => setSelectedProject(null)}
-        work={selectedProject}
-      />
     </>
   );
 }

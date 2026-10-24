@@ -12,6 +12,7 @@ import {
 } from '@/types/contentful';
 import { Document, BLOCKS } from '@contentful/rich-text-types';
 import { SITE } from '@/lib/site';
+import { workSlug } from '@/lib/work-slug';
 
 const SPACE_ID = process.env.CONTENTFUL_SPACE_ID;
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN;
@@ -271,6 +272,31 @@ const mockData: PageData = {
   ).filter((c) => Boolean(c.fields.linkTo)),
 };
 
+// Featured works first; the rest keep the order Contentful returns.
+const sortWorks = (works: Work[]) =>
+  [...works].sort(
+    (a, b) => Number(!!b.fields.featured) - Number(!!a.fields.featured)
+  );
+
+export async function getWorks(): Promise<Work[]> {
+  if (!client) return sortWorks(mockData.works);
+
+  try {
+    const works = await client.getEntries<WorkSkeleton>({
+      content_type: 'work',
+    });
+    return sortWorks(works.items as unknown as Work[]);
+  } catch (error) {
+    console.error('Error fetching works from Contentful:', error);
+    return sortWorks(mockData.works);
+  }
+}
+
+export async function getWorkBySlug(slug: string): Promise<Work | undefined> {
+  const works = await getWorks();
+  return works.find((work) => workSlug(work) === slug);
+}
+
 export async function getPageData(): Promise<PageData> {
   if (!client) {
     console.warn('Contentful credentials not found, using mock data.');
@@ -279,14 +305,12 @@ export async function getPageData(): Promise<PageData> {
 
   try {
     const jobs = await client.getEntries<JobSkeleton>({ content_type: 'job' });
-    const works = await client.getEntries<WorkSkeleton>({
-      content_type: 'work',
-    });
+    const works = await getWorks();
 
     return {
       sections: mockData.sections,
       jobs: jobs.items as unknown as Job[],
-      works: works.items as unknown as Work[],
+      works,
       contacts: mockData.contacts,
     };
   } catch (error) {
