@@ -11,6 +11,7 @@ import {
   ContactSkeleton,
 } from '@/types/contentful';
 import { Document, BLOCKS } from '@contentful/rich-text-types';
+import { SITE } from '@/lib/site';
 
 const SPACE_ID = process.env.CONTENTFUL_SPACE_ID;
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN;
@@ -261,22 +262,13 @@ const mockData: PageData = {
       },
     },
   ],
-  contacts: [
-    {
-      sys: { id: 'contact1' },
-      fields: {
-        name: 'LinkedIn',
-        linkTo: 'https://linkedin.com',
-      },
-    },
-    {
-      sys: { id: 'contact2' },
-      fields: {
-        name: 'GitHub',
-        linkTo: 'https://github.com',
-      },
-    },
-  ],
+  // Built from SITE.social: empty URLs are skipped so no broken link is rendered.
+  contacts: (
+    [
+      { sys: { id: 'contact-linkedin' }, fields: { name: 'LinkedIn', linkTo: SITE.social.linkedin } },
+      { sys: { id: 'contact-github' }, fields: { name: 'GitHub', linkTo: SITE.social.github } },
+    ] as Contact[]
+  ).filter((c) => Boolean(c.fields.linkTo)),
 };
 
 export async function getPageData(): Promise<PageData> {

@@ -4,6 +4,7 @@ import TechStack from '@/components/TechStack';
 import Curriculum from '@/components/Curriculum';
 import Portfolio from '@/components/Portfolio';
 import ContactSection from '@/components/Contact';
+import JsonLd from '@/components/JsonLd';
 import { getPageData } from '@/lib/contentful';
 
 export default async function Home() {
@@ -12,6 +13,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-zinc-950">
+      <JsonLd />
       <Hero />
       {aboutSection && <About section={aboutSection} />}
       <TechStack />
