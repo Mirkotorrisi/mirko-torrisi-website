@@ -12,7 +12,13 @@ import { BLOCKS } from '@contentful/rich-text-types';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Curriculum({ jobs }: { jobs: Job[] }) {
+export default function Curriculum({
+  heading,
+  jobs,
+}: {
+  heading: string;
+  jobs: Job[];
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -87,7 +93,7 @@ export default function Curriculum({ jobs }: { jobs: Job[] }) {
     <section className="min-h-screen bg-zinc-950 py-20 text-white">
       <div className="container mx-auto px-4">
         <h2 className="mb-12 bg-linear-to-r from-blue-400 to-white bg-clip-text text-center text-5xl font-bold text-transparent md:text-6xl">
-          Curriculum
+          {heading}
         </h2>
         <div ref={containerRef} className="mx-auto max-w-3xl space-y-12">
           {sortedJobs.map((job, index) => (

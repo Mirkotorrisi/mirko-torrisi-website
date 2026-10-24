@@ -18,7 +18,7 @@ const options: Options = {
 
 export default function About({ section }: { section: Section }) {
   return (
-    <section className="bg-zinc-950 py-20 text-white">
+    <section id="about" className="scroll-mt-20 bg-zinc-950 py-20 text-white">
       <div className="container mx-auto px-4">
         <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 md:grid-cols-2">
           <div className="text-left">

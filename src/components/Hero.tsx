@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import Cubes from './Cubes';
+import type { Dictionary } from '@/i18n/dictionaries';
 
-export default function Hero() {
+export default function Hero({ dict }: { dict: Dictionary['hero'] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const circleRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
@@ -64,7 +65,7 @@ export default function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-black text-white"
+      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black pt-16 text-white"
     >
       <div className="absolute top-0 left-0 h-full w-full">
         <Cubes
@@ -84,16 +85,40 @@ export default function Hero() {
           className="pointer-events-none absolute top-0 left-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500 opacity-50 mix-blend-screen blur-[100px]"
         />
       )}
-      <div className="z-10 p-4 text-center">
+      <div className="relative z-10 flex max-w-4xl flex-col items-center p-4 text-center">
+        <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-emerald-300">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+          {dict.badge}
+        </span>
         <h1
           ref={textRef}
           className="text-6xl font-bold tracking-tighter mix-blend-difference md:text-9xl"
         >
           MIRKO TORRISI
         </h1>
-        <p className="mt-4 text-xl font-light tracking-widest uppercase opacity-80 md:text-2xl">
-          FULL STACK DEVELOPER
+        <p className="mt-4 text-lg font-light tracking-widest uppercase opacity-80 md:text-2xl">
+          {dict.role}
         </p>
+        <p className="mt-8 max-w-2xl text-xl leading-snug font-medium text-zinc-100 md:text-3xl">
+          {dict.headline}
+        </p>
+        <p className="mt-4 max-w-xl text-base text-zinc-400 md:text-lg">
+          {dict.sub}
+        </p>
+        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <a
+            href="#contact"
+            className="rounded-full bg-white px-8 py-3 text-sm font-bold text-black transition-transform hover:scale-105"
+          >
+            {dict.ctaPrimary}
+          </a>
+          <a
+            href="#works"
+            className="rounded-full border border-zinc-600 bg-black/30 px-8 py-3 text-sm font-bold text-white backdrop-blur-sm transition-colors hover:border-zinc-400"
+          >
+            {dict.ctaSecondary}
+          </a>
+        </div>
       </div>
     </section>
   );
