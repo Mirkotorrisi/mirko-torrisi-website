@@ -62,37 +62,44 @@ export default function Portfolio({ works }: { works: Work[] }) {
             </p>
           </div>
 
-          {works.map((work) => (
-            <div
-              key={work.sys.id}
-              className="group relative h-[450px] w-[350px] shrink-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm transition-all duration-500 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10"
-            >
-              <div className="absolute inset-0 flex items-center justify-center p-16 transition-transform duration-700 group-hover:scale-110">
-                <img
-                  src={assetUrl(work.fields.image?.fields?.file?.url)}
-                  alt={work.fields.title}
-                  className="h-full w-full object-contain drop-shadow-2xl filter transition-all duration-500 group-hover:drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]"
-                />
-              </div>
+          {works.map((work) => {
+            const image = assetUrl(work.fields.image?.fields?.file?.url);
 
-              <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/90 via-black/40 to-transparent p-8 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <h3 className="mb-4 text-2xl font-bold text-white">
-                  {work.fields.title}
-                </h3>
-                {work.fields.tagline && (
-                  <p className="mb-4 text-sm text-zinc-300">
-                    {work.fields.tagline}
-                  </p>
-                )}
-                <Link
-                  href={`/works/${workSlug(work)}`}
-                  className="block w-full rounded-xl bg-white py-3 text-center text-sm font-bold text-black transition-transform hover:scale-105 active:scale-95"
-                >
-                  View Project
-                </Link>
+            return (
+              <div
+                key={work.sys.id}
+                style={
+                  { '--card-image': `url("${image}")` } as React.CSSProperties
+                }
+                className="group relative isolate h-[450px] w-[350px] shrink-0 before:absolute before:inset-3 before:-z-10 before:rounded-2xl before:bg-(image:--card-image) before:bg-cover before:bg-center before:opacity-50 before:blur-2xl before:saturate-200 before:transition-all before:duration-500 before:content-[''] hover:before:inset-0 hover:before:opacity-80"
+              >
+                <div className="absolute inset-0 overflow-hidden rounded-2xl border border-white/10 bg-zinc-900">
+                  <img
+                    src={image}
+                    alt={work.fields.title}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+
+                  <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/90 via-black/40 to-transparent p-8 transition-colors duration-300 group-hover:from-black/95 group-hover:via-black/60">
+                    <h3 className="mb-2 text-2xl font-bold text-white">
+                      {work.fields.title}
+                    </h3>
+                    {work.fields.tagline && (
+                      <p className="mb-4 text-sm text-zinc-300">
+                        {work.fields.tagline}
+                      </p>
+                    )}
+                    <Link
+                      href={`/works/${workSlug(work)}`}
+                      className="block w-full translate-y-2 rounded-xl bg-white py-3 text-center text-sm font-bold text-black opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 hover:scale-105 active:scale-95"
+                    >
+                      View Project
+                    </Link>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* Spacer for end of scroll */}
           <div className="w-[20vw]" />
