@@ -1,8 +1,3 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Job } from '@/types/contentful';
 import {
   documentToReactComponents,
@@ -10,7 +5,31 @@ import {
 } from '@contentful/rich-text-react-renderer';
 import { BLOCKS } from '@contentful/rich-text-types';
 
-gsap.registerPlugin(ScrollTrigger);
+const getEndYear = (period: string) => {
+  const lowerPeriod = period.toLowerCase();
+  if (lowerPeriod.includes('today') || lowerPeriod.includes('ongoing')) {
+    return 9999;
+  }
+  const parts = period.split('-');
+  if (parts.length > 1) {
+    return parseInt(parts[1].trim(), 10);
+  }
+  return parseInt(period.trim(), 10);
+};
+
+const options: Options = {
+  renderNode: {
+    [BLOCKS.UL_LIST]: (node, children) => (
+      <ul className="list-disc space-y-2 pl-5 marker:text-majolica">{children}</ul>
+    ),
+    [BLOCKS.LIST_ITEM]: (node, children) => (
+      <li className="[&>p]:mb-0">{children}</li>
+    ),
+    [BLOCKS.PARAGRAPH]: (node, children) => (
+      <p className="mb-2 last:mb-0">{children}</p>
+    ),
+  },
+};
 
 export default function Curriculum({
   heading,
@@ -19,105 +38,34 @@ export default function Curriculum({
   heading: string;
   jobs: Job[];
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-
-  const sortedJobs = [...jobs].sort((a, b) => {
-    const getEndYear = (period: string) => {
-      const lowerPeriod = period.toLowerCase();
-      if (lowerPeriod.includes('today') || lowerPeriod.includes('ongoing')) {
-        return 9999;
-      }
-      const parts = period.split('-');
-      if (parts.length > 1) {
-        return parseInt(parts[1].trim(), 10);
-      }
-      return parseInt(period.trim(), 10);
-    };
-
-    return getEndYear(b.fields.period) - getEndYear(a.fields.period);
-  });
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (!containerRef.current) return;
-
-      const cards = containerRef.current.children;
-
-      Array.from(cards).forEach((card, index) => {
-        gsap.fromTo(
-          card,
-          {
-            opacity: 0,
-            y: 50,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              toggleActions: 'play none none reverse',
-            },
-            delay: index * 0.1,
-          }
-        );
-      });
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, [jobs]);
-
-  const options: Options = {
-    renderNode: {
-      [BLOCKS.UL_LIST]: (node, children) => (
-        <ul className="space-y-2">{children}</ul>
-      ),
-      [BLOCKS.LIST_ITEM]: (node, children) => (
-        <li className="flex items-start leading-relaxed text-zinc-300">
-          <span className="mt-1.5 mr-2 text-blue-500">▹</span>
-          <div className="flex-1">{children}</div>
-        </li>
-      ),
-      [BLOCKS.PARAGRAPH]: (node, children) => (
-        <p className="mb-2 leading-relaxed text-zinc-300 last:mb-0">
-          {children}
-        </p>
-      ),
-    },
-  };
+  const sortedJobs = [...jobs].sort(
+    (a, b) => getEndYear(b.fields.period) - getEndYear(a.fields.period)
+  );
 
   return (
-    <section className="min-h-screen bg-zinc-950 py-20 text-white">
-      <div className="container mx-auto px-4">
-        <h2 className="mb-12 bg-linear-to-r from-blue-400 to-white bg-clip-text text-center text-5xl font-bold text-transparent md:text-6xl">
-          {heading}
-        </h2>
-        <div ref={containerRef} className="mx-auto max-w-3xl space-y-12">
-          {sortedJobs.map((job, index) => (
-            <div
+    <section className="bg-limestone px-5 py-24 text-lava md:px-8 md:py-32">
+      <div className="mx-auto max-w-7xl">
+        <h2 className="h-section">{heading}</h2>
+        <ol className="mt-16 border-t border-lava/25">
+          {sortedJobs.map((job) => (
+            <li
               key={job.sys.id}
-              ref={(el) => {
-                cardsRef.current[index] = el;
-              }}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 backdrop-blur-sm transition-colors hover:border-zinc-600"
+              className="grid gap-3 border-b border-lava/25 py-8 md:grid-cols-12 md:gap-8"
             >
-              <div className="mb-4 flex items-start justify-between">
-                <h3 className="text-2xl font-semibold text-blue-400">
+              <p className="text-basalt tabular-nums md:col-span-3">
+                {job.fields.period}
+              </p>
+              <div className="md:col-span-8 lg:col-span-6">
+                <h3 className="font-display text-2xl font-semibold tracking-tight">
                   {job.fields.companyName}
                 </h3>
-                <span className="font-mono text-sm text-zinc-400">
-                  {job.fields.period}
-                </span>
+                <div className="mt-3">
+                  {documentToReactComponents(job.fields.description, options)}
+                </div>
               </div>
-              <div className="text-zinc-300">
-                {documentToReactComponents(job.fields.description, options)}
-              </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   );

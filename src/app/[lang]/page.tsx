@@ -26,7 +26,7 @@ export default async function Home({ params }: Props) {
   return (
     <>
       <Header lang={lang} dict={dict.nav} />
-      <main className="min-h-screen bg-zinc-950">
+      <main className="min-h-screen bg-limestone">
         <JsonLd lang={lang} />
         <Hero dict={dict.hero} />
         <Services lang={lang} dict={dict.services} works={data.works} />

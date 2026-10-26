@@ -26,30 +26,28 @@ export default async function OpengraphImage({
           justifyContent: 'center',
           padding: '80px',
           background:
-            'linear-gradient(135deg, #000000 0%, #09090b 55%, #1e3a8a 100%)',
-          color: '#ffffff',
+            '#17191b',
+          color: '#e3e4df',
         }}
       >
         <div style={{ fontSize: 96, fontWeight: 800, letterSpacing: '-0.04em' }}>
-          MIRKO TORRISI
+          Mirko Torrisi
         </div>
         <div
           style={{
             marginTop: 16,
             fontSize: 40,
-            letterSpacing: '0.2em',
-            color: '#93c5fd',
-            textTransform: 'uppercase',
+            color: '#8fa8ff',
           }}
         >
           {hero.role}
         </div>
         <div
-          style={{ marginTop: 48, fontSize: 34, color: '#d4d4d8', maxWidth: 1000 }}
+          style={{ marginTop: 48, fontSize: 34, color: '#e3e4df', maxWidth: 1000 }}
         >
           {hero.headline}
         </div>
-        <div style={{ marginTop: 24, fontSize: 26, color: '#71717a' }}>
+        <div style={{ marginTop: 24, fontSize: 26, color: '#a9adaa' }}>
           Catania · Remote · mirkotorrisi.it
         </div>
       </div>

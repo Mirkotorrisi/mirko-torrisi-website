@@ -1,4 +1,3 @@
-import { Github, Linkedin, Mail, MessageCircle } from 'lucide-react';
 import ContactForm from './ContactForm';
 import { Contact } from '@/types/contentful';
 import type { Dictionary } from '@/i18n/dictionaries';
@@ -11,98 +10,77 @@ type Props = {
   contacts: Contact[];
 };
 
+const linkClass =
+  'font-display font-semibold underline decoration-majolica-light decoration-2 underline-offset-4 transition-colors hover:text-majolica-light';
+
 export default function ContactSection({ lang, dict, contacts }: Props) {
   const direct = [
     SITE.email && {
       href: `mailto:${SITE.email}`,
       label: dict.emailLabel,
       value: SITE.email,
-      Icon: Mail,
     },
     SITE.whatsapp && {
       href: `https://wa.me/${SITE.whatsapp}`,
       label: dict.whatsappLabel,
       value: `+${SITE.whatsapp}`,
-      Icon: MessageCircle,
     },
-  ].filter(Boolean) as {
-    href: string;
-    label: string;
-    value: string;
-    Icon: typeof Mail;
-  }[];
+  ].filter(Boolean) as { href: string; label: string; value: string }[];
 
   return (
     <section
       id="contact"
-      className="flex scroll-mt-20 flex-col items-center bg-zinc-950 px-4 pt-32 pb-12 text-white"
+      className="on-lava scroll-mt-16 bg-lava px-5 pt-24 pb-10 text-limestone md:px-8 md:pt-32"
     >
-      <h2 className="text-center text-5xl font-bold">{dict.heading}</h2>
-      <p className="mt-6 mb-12 max-w-xl text-center text-lg text-zinc-400">
-        {dict.intro}
-      </p>
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <h2 className="h-section">{dict.heading}</h2>
+            <p className="mt-6 max-w-[30rem] text-xl text-ash">{dict.intro}</p>
 
-      <div className="w-full max-w-2xl">
-        <ContactForm lang={lang} dict={dict} />
+            <p className="mt-14 text-ash">{dict.direct}</p>
+            <ul className="mt-4 space-y-4">
+              {direct.map(({ href, label, value }) => (
+                <li key={href}>
+                  <span className="block text-ash">{label}</span>
+                  <a
+                    href={href}
+                    target={href.startsWith('http') ? '_blank' : undefined}
+                    rel="noopener noreferrer"
+                    className={`${linkClass} text-xl`}
+                  >
+                    {value}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            {contacts.length > 0 && (
+              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
+                {contacts.map((contact) => (
+                  <li key={contact.sys.id}>
+                    <a
+                      href={contact.fields.linkTo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={linkClass}
+                    >
+                      {contact.fields.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="lg:col-span-6 lg:col-start-7">
+            <ContactForm lang={lang} dict={dict} />
+          </div>
+        </div>
+
+        <footer className="mt-24 border-t border-limestone/20 pt-6 text-base text-ash">
+          © {new Date().getFullYear()} {SITE.name}. {dict.rights}
+        </footer>
       </div>
-
-      <p className="mt-16 text-sm font-semibold tracking-wider text-zinc-500 uppercase">
-        {dict.direct}
-      </p>
-      <div className="mt-6 flex flex-wrap justify-center gap-8">
-        {direct.map(({ href, label, value, Icon }) => (
-          <a
-            key={href}
-            href={href}
-            target={href.startsWith('http') ? '_blank' : undefined}
-            rel="noopener noreferrer"
-            className="group flex flex-col items-center gap-3 transition-transform hover:scale-110"
-          >
-            <div className="rounded-full border border-zinc-800 bg-zinc-900 p-5 transition-colors group-hover:border-blue-500 group-hover:bg-blue-500/10">
-              <Icon
-                size={28}
-                className="text-zinc-400 transition-colors group-hover:text-blue-500"
-              />
-            </div>
-            <span className="text-sm font-medium text-zinc-500 group-hover:text-zinc-300">
-              {label}
-              <span className="sr-only">: {value}</span>
-            </span>
-          </a>
-        ))}
-        {contacts.map((contact) => {
-          const name = contact.fields.name.toLowerCase();
-          const Icon = name.includes('github')
-            ? Github
-            : name.includes('linkedin')
-              ? Linkedin
-              : Mail;
-
-          return (
-            <a
-              key={contact.sys.id}
-              href={contact.fields.linkTo}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex flex-col items-center gap-3 transition-transform hover:scale-110"
-            >
-              <div className="rounded-full border border-zinc-800 bg-zinc-900 p-5 transition-colors group-hover:border-blue-500 group-hover:bg-blue-500/10">
-                <Icon
-                  size={28}
-                  className="text-zinc-400 transition-colors group-hover:text-blue-500"
-                />
-              </div>
-              <span className="text-sm font-medium text-zinc-500 group-hover:text-zinc-300">
-                {contact.fields.name}
-              </span>
-            </a>
-          );
-        })}
-      </div>
-
-      <footer className="mt-24 text-sm text-zinc-600">
-        © {new Date().getFullYear()} {SITE.name}. {dict.rights}
-      </footer>
     </section>
   );
 }

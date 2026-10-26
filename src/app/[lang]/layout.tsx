@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
-import { Inter } from 'next/font/google';
+import { Bricolage_Grotesque, Newsreader } from 'next/font/google';
 import '../globals.css';
 import SmoothScroll from '@/components/SmoothScroll';
 import { SITE } from '@/lib/site';
@@ -14,7 +14,18 @@ import {
 } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
 
-const inter = Inter({ subsets: ['latin'] });
+const bricolage = Bricolage_Grotesque({
+  subsets: ['latin'],
+  variable: '--font-bricolage',
+  display: 'swap',
+});
+
+const newsreader = Newsreader({
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  variable: '--font-newsreader',
+  display: 'swap',
+});
 
 type Props = {
   children: React.ReactNode;
@@ -76,7 +87,7 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: '#09090b',
+  themeColor: '#e3e4df',
 };
 
 export default async function RootLayout({ children, params }: Props) {
@@ -85,7 +96,7 @@ export default async function RootLayout({ children, params }: Props) {
 
   return (
     <html lang={htmlLang[lang]}>
-      <body className={inter.className}>
+      <body className={`${bricolage.variable} ${newsreader.variable}`}>
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Send } from 'lucide-react';
 import { submitForm } from '@/services/formService';
 import type { Dictionary } from '@/i18n/dictionaries';
 import type { Locale } from '@/i18n/config';
@@ -9,7 +8,7 @@ import type { Locale } from '@/i18n/config';
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
 const inputClass =
-  'w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3 text-zinc-100 placeholder-zinc-500 outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500 user-invalid:border-red-500';
+  'w-full rounded-sm border border-limestone/30 bg-lava-soft px-4 py-3 text-limestone placeholder-ash/70 transition-colors focus:border-majolica-light user-invalid:border-[#ff8a7a]';
 
 export default function ContactForm({
   lang,
@@ -38,7 +37,7 @@ export default function ContactForm({
     return (
       <p
         role="status"
-        className="w-full rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-8 text-center font-medium text-emerald-300"
+        className="w-full border-l-4 border-lemon bg-lava-soft p-8 text-xl text-limestone"
       >
         {dict.success}
       </p>
@@ -49,7 +48,7 @@ export default function ContactForm({
     <form
       onSubmit={onSubmit}
       noValidate
-      className="grid w-full grid-cols-1 gap-6 rounded-2xl border border-zinc-800/50 bg-zinc-900/30 p-6 shadow-xl backdrop-blur-sm md:grid-cols-2 md:p-8"
+      className="grid w-full grid-cols-1 gap-6 md:grid-cols-2"
     >
       <input type="hidden" name="lang" value={lang} />
       {/* Honeypot: hidden from people, often filled in by bots. */}
@@ -63,7 +62,7 @@ export default function ContactForm({
       />
 
       <label className="flex flex-col gap-2">
-        <span className="text-xs font-bold tracking-wider text-zinc-400 uppercase">
+        <span className="font-display font-medium">
           {name.label}
         </span>
         <input
@@ -77,7 +76,7 @@ export default function ContactForm({
       </label>
 
       <label className="flex flex-col gap-2">
-        <span className="text-xs font-bold tracking-wider text-zinc-400 uppercase">
+        <span className="font-display font-medium">
           {email.label}
         </span>
         <input
@@ -92,7 +91,7 @@ export default function ContactForm({
       </label>
 
       <label className="flex flex-col gap-2 md:col-span-2">
-        <span className="text-xs font-bold tracking-wider text-zinc-400 uppercase">
+        <span className="font-display font-medium">
           {message.label}
         </span>
         <textarea
@@ -106,19 +105,18 @@ export default function ContactForm({
       </label>
 
       {status === 'error' && (
-        <p role="alert" className="text-sm text-red-400 md:col-span-2">
+        <p role="alert" className="text-[#ff8a7a] md:col-span-2">
           {dict.error}
         </p>
       )}
 
-      <div className="flex justify-center md:col-span-2">
+      <div className="md:col-span-2">
         <button
           type="submit"
           disabled={status === 'sending'}
-          className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-linear-to-r from-blue-600 to-blue-500 px-8 py-3 font-semibold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 disabled:cursor-not-allowed disabled:opacity-50"
+          className="cursor-pointer rounded-sm bg-majolica px-8 py-3.5 font-display font-semibold text-white transition-colors hover:bg-limestone hover:text-lava disabled:cursor-not-allowed disabled:opacity-50"
         >
           {status === 'sending' ? dict.sending : dict.submit}
-          <Send className="h-4 w-4" aria-hidden />
         </button>
       </div>
     </form>

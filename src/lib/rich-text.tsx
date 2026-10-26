@@ -15,21 +15,21 @@ export const hasContent = (doc?: Document) => richTextToPlain(doc).length > 0;
 export const articleOptions: Options = {
   renderNode: {
     [BLOCKS.PARAGRAPH]: (_node, children: ReactNode) => (
-      <p className="mb-5 leading-relaxed text-zinc-300">{children}</p>
+      <p className="mb-5 leading-[1.7] text-lava">{children}</p>
     ),
     [BLOCKS.HEADING_2]: (_node, children: ReactNode) => (
-      <h2 className="mt-14 mb-4 text-2xl font-bold text-white">{children}</h2>
+      <h2 className="mt-14 mb-4 font-display text-3xl font-bold tracking-tight text-lava">{children}</h2>
     ),
     [BLOCKS.HEADING_3]: (_node, children: ReactNode) => (
-      <h3 className="mt-8 mb-3 text-lg font-semibold text-white">{children}</h3>
+      <h3 className="mt-8 mb-3 font-display text-xl font-semibold text-lava">{children}</h3>
     ),
     [BLOCKS.UL_LIST]: (_node, children: ReactNode) => (
-      <ul className="mb-6 list-disc space-y-2 pl-6 text-zinc-300 marker:text-blue-400">
+      <ul className="mb-6 list-disc space-y-2 pl-6 text-lava marker:text-majolica">
         {children}
       </ul>
     ),
     [BLOCKS.OL_LIST]: (_node, children: ReactNode) => (
-      <ol className="mb-6 list-decimal space-y-2 pl-6 text-zinc-300 marker:text-blue-400">
+      <ol className="mb-6 list-decimal space-y-2 pl-6 text-lava marker:text-majolica">
         {children}
       </ol>
     ),
@@ -38,17 +38,17 @@ export const articleOptions: Options = {
       <li className="leading-relaxed [&>p]:mb-0">{children}</li>
     ),
     [BLOCKS.QUOTE]: (_node, children: ReactNode) => (
-      <blockquote className="mb-6 border-l-2 border-blue-500 pl-4 text-zinc-400 italic">
+      <blockquote className="mb-6 border-l-2 border-majolica pl-4 text-basalt italic">
         {children}
       </blockquote>
     ),
-    [BLOCKS.HR]: () => <hr className="my-10 border-zinc-800" />,
+    [BLOCKS.HR]: () => <hr className="my-10 border-lava/25" />,
     [INLINES.HYPERLINK]: (node, children: ReactNode) => (
       <a
         href={node.data.uri}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-400 underline underline-offset-4 hover:text-blue-300"
+        className="text-majolica underline underline-offset-4 hover:text-lava"
       >
         {children}
       </a>

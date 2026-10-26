@@ -1,15 +1,8 @@
 import Link from 'next/link';
-import { Bot, Check, LayoutDashboard, MonitorSmartphone } from 'lucide-react';
 import type { Work } from '@/types/contentful';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { Locale, localePath } from '@/i18n/config';
 import { workSlug } from '@/lib/work-slug';
-
-const ICONS: Record<string, typeof Bot> = {
-  websites: MonitorSmartphone,
-  platforms: LayoutDashboard,
-  ai: Bot,
-};
 
 type Props = {
   lang: Locale;
@@ -23,67 +16,74 @@ export default function Services({ lang, dict, works }: Props) {
   return (
     <section
       id="services"
-      className="scroll-mt-20 bg-zinc-950 px-4 py-24 text-white md:px-8"
+      className="on-lava scroll-mt-16 bg-lava px-5 py-24 text-limestone md:px-8 md:py-32"
     >
-      <div className="mx-auto max-w-6xl">
-        <p className="text-center text-sm font-semibold tracking-widest text-blue-400 uppercase">
-          {dict.eyebrow}
-        </p>
-        <h2 className="mt-3 bg-linear-to-r from-blue-400 to-white bg-clip-text text-center text-5xl font-bold text-transparent md:text-6xl">
-          {dict.heading}
-        </h2>
-        <p className="mx-auto mt-6 max-w-2xl text-center text-lg text-zinc-400">
-          {dict.intro}
-        </p>
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-8 lg:grid-cols-12">
+          <h2 className="h-section lg:col-span-5">{dict.heading}</h2>
+          <p className="max-w-[34rem] text-xl text-ash lg:col-span-6 lg:col-start-7 lg:pt-3">
+            {dict.intro}
+          </p>
+        </div>
 
-        <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
-          {dict.items.map((service) => {
-            const Icon = ICONS[service.id] ?? Bot;
+        <div className="mt-16 border-t border-limestone/25">
+          {dict.items.map((service, i) => {
             const examples = service.examples
               .map((slug) => bySlug.get(slug))
               .filter((w): w is Work => Boolean(w));
 
             return (
-              <article
+              <details
                 key={service.id}
-                className="flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 transition-colors hover:border-zinc-600"
+                name="services"
+                open={i === 0}
+                className="group border-b border-limestone/25"
               >
-                <Icon className="h-8 w-8 text-blue-400" aria-hidden />
-                <h3 className="mt-6 text-2xl font-semibold">{service.title}</h3>
-                <p className="mt-3 leading-relaxed text-zinc-400">
-                  {service.body}
-                </p>
-                <ul className="mt-6 space-y-3">
-                  {service.points.map((point) => (
-                    <li key={point} className="flex gap-3 text-sm text-zinc-300">
-                      <Check
-                        className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400"
-                        aria-hidden
-                      />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-                {examples.length > 0 && (
-                  <div className="mt-auto pt-8">
-                    <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase">
-                      {dict.examplesLabel}
-                    </p>
-                    <ul className="mt-3 flex flex-wrap gap-2">
-                      {examples.map((work) => (
-                        <li key={work.sys.id}>
-                          <Link
-                            href={localePath(lang, `/works/${workSlug(work)}`)}
-                            className="inline-block rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-300 transition-colors hover:border-blue-500 hover:text-white"
-                          >
-                            {work.fields.title}
-                          </Link>
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-7 transition-colors hover:text-majolica-light md:py-9 [&::-webkit-details-marker]:hidden">
+                  <h3 className="font-display text-3xl font-semibold tracking-tight text-balance md:text-5xl">
+                    {service.title}
+                  </h3>
+                  <span aria-hidden className="relative h-6 w-6 shrink-0">
+                    <span className="absolute top-1/2 left-0 h-0.5 w-full -translate-y-1/2 bg-current" />
+                    <span className="absolute top-0 left-1/2 h-full w-0.5 -translate-x-1/2 bg-current transition-transform group-open:scale-y-0" />
+                  </span>
+                </summary>
+
+                <div className="grid gap-8 pb-12 lg:grid-cols-12">
+                  <p className="max-w-[34rem] text-xl lg:col-span-5">
+                    {service.body}
+                  </p>
+                  <div className="lg:col-span-6 lg:col-start-7">
+                    <ul className="space-y-3 text-ash">
+                      {service.points.map((point) => (
+                        <li
+                          key={point}
+                          className="border-l-2 border-majolica-light pl-4"
+                        >
+                          {point}
                         </li>
                       ))}
                     </ul>
+                    {examples.length > 0 && (
+                      <div className="mt-8">
+                        <p className="text-ash">{dict.examplesLabel}</p>
+                        <ul className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
+                          {examples.map((work) => (
+                            <li key={work.sys.id}>
+                              <Link
+                                href={localePath(lang, `/works/${workSlug(work)}`)}
+                                className="font-display font-semibold underline decoration-majolica-light decoration-2 underline-offset-4 transition-colors hover:text-majolica-light"
+                              >
+                                {work.fields.title}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
-                )}
-              </article>
+                </div>
+              </details>
             );
           })}
         </div>

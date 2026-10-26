@@ -1,19 +1,78 @@
 @import "tailwindcss";
 
+/* Catania is built from black lava stone and white limestone. */
+@theme inline {
+  --color-limestone: #e3e4df;
+  --color-limestone-deep: #d3d5ce;
+  --color-lava: #17191b;
+  --color-lava-soft: #222528;
+  --color-basalt: #4a4f52;
+  --color-ash: #a9adaa;
+  --color-majolica: #1f4fd8;
+  --color-majolica-light: #8fa8ff;
+  --color-lemon: #f0d24a;
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-newsreader), ui-serif, Georgia, serif;
+}
+
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 0, 0, 0;
-  --background-end-rgb: 0, 0, 0;
+  --focus: var(--color-majolica);
+  interpolate-size: allow-keywords;
+}
+
+/* Dark sections switch the focus ring to the lighter blue. */
+.on-lava {
+  --focus: var(--color-majolica-light);
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: var(--color-limestone);
+  color: var(--color-lava);
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+@layer components {
+  .h-section {
+    font-family: var(--font-display);
+    font-size: clamp(2.75rem, 7vw, 5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  /* Photos sit in black and white until you point at them. Touch screens keep colour. */
+  @media (hover: hover) {
+    .stone-photo {
+      filter: grayscale(1) contrast(1.05);
+      transition: filter 0.4s;
+    }
+    .group:hover .stone-photo,
+    .group:focus-visible .stone-photo {
+      filter: none;
+    }
+  }
+}
+
+/* Accordion rows open and close smoothly where the browser supports it. */
+@media (prefers-reduced-motion: no-preference) {
+  details::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size 0.35s ease,
+      content-visibility 0.35s allow-discrete;
+  }
+  details[open]::details-content {
+    block-size: auto;
+  }
 }
 
 /* Lenis Recommended CSS */

@@ -9,36 +9,32 @@ import Image from 'next/image';
 const options: Options = {
   renderNode: {
     [BLOCKS.PARAGRAPH]: (node, children) => (
-      <p className="mb-6 text-lg leading-relaxed text-zinc-300 last:mb-0">
-        {children}
-      </p>
+      <p className="mb-6 text-xl leading-[1.7] last:mb-0">{children}</p>
     ),
   },
 };
 
 export default function About({ section }: { section: Section }) {
   return (
-    <section id="about" className="scroll-mt-20 bg-zinc-950 py-20 text-white">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 md:grid-cols-2">
-          <div className="text-left">
-            <h2 className="mb-8 bg-linear-to-r from-blue-400 to-white bg-clip-text text-center text-5xl font-bold text-transparent md:text-6xl">
-              {section.fields.title}
-            </h2>
-            <div className="text-zinc-300">
-              {documentToReactComponents(section.fields.paragraph, options)}
-            </div>
+    <section
+      id="about"
+      className="scroll-mt-16 bg-limestone px-5 pb-24 text-lava md:px-8 md:pb-32"
+    >
+      <div className="mx-auto grid max-w-7xl gap-12 border-t border-lava/25 pt-24 md:pt-32 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <h2 className="h-section">{section.fields.title}</h2>
+          <div className="mt-10 max-w-[38rem]">
+            {documentToReactComponents(section.fields.paragraph, options)}
           </div>
-          <div className="relative mx-auto aspect-3/4 w-full max-w-md overflow-hidden rounded-2xl mask-[linear-gradient(to_bottom,black_70%,transparent_100%)] md:ml-auto">
-            <Image
-              src="/foto-cv.webp"
-              alt="Mirko Torrisi"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              priority
-            />
-          </div>
+        </div>
+        <div className="relative aspect-4/5 w-full max-w-md overflow-hidden rounded-sm bg-limestone-deep lg:col-span-4 lg:col-start-9 lg:max-w-none">
+          <Image
+            src="/foto-cv.webp"
+            alt="Mirko Torrisi"
+            fill
+            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 33vw"
+          />
         </div>
       </div>
     </section>

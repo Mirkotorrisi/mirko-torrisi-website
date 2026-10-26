@@ -139,7 +139,7 @@ export default async function WorkPage({ params }: Props) {
         dict={dict.nav}
         alternateHref={localePath(other, path)}
       />
-      <main className="min-h-screen bg-zinc-950 pt-16 text-white">
+      <main className="min-h-screen bg-limestone pt-16 text-lava">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -147,26 +147,32 @@ export default async function WorkPage({ params }: Props) {
         <article className="mx-auto max-w-3xl px-6 py-16 md:py-24">
           <Link
             href={`${localePath(lang)}#works`}
-            className="inline-flex items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-white"
+            className="inline-flex items-center gap-2 font-display font-medium text-basalt transition-colors hover:text-majolica"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden /> {dict.works.back}
           </Link>
 
           <header className="mt-10">
             {meta.length > 0 && (
-              <p className="text-sm tracking-wide text-blue-400 uppercase">
-                {meta.join(' · ')}
-              </p>
+              <ul className="flex flex-wrap gap-x-5 gap-y-1 text-basalt">
+                {meta.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             )}
-            <h1 className="mt-3 text-4xl font-bold md:text-5xl">{title}</h1>
-            {tagline && <p className="mt-4 text-xl text-zinc-400">{tagline}</p>}
+            <h1 className="mt-4 font-display text-5xl leading-none font-bold tracking-[-0.035em] text-balance md:text-7xl">
+              {title}
+            </h1>
+            {tagline && (
+              <p className="mt-6 max-w-[34rem] text-xl text-basalt">{tagline}</p>
+            )}
 
             <div className="mt-8 flex flex-wrap gap-3">
               <a
                 href={link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition-transform hover:scale-105"
+                className="inline-flex items-center gap-2 rounded-sm bg-majolica px-6 py-3 font-display font-semibold text-white transition-colors hover:bg-lava"
               >
                 {dict.works.visit} <ArrowUpRight className="h-4 w-4" aria-hidden />
               </a>
@@ -175,7 +181,7 @@ export default async function WorkPage({ params }: Props) {
                   href={repoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-zinc-700 px-6 py-3 text-sm font-bold text-white transition-colors hover:border-zinc-500"
+                  className="inline-flex items-center gap-2 rounded-sm border-2 border-lava px-6 py-3 font-display font-semibold transition-colors hover:bg-lava hover:text-limestone"
                 >
                   {dict.works.source}{' '}
                   <ArrowUpRight className="h-4 w-4" aria-hidden />
@@ -185,7 +191,7 @@ export default async function WorkPage({ params }: Props) {
           </header>
 
           {cover && (
-            <div className="relative mt-12 aspect-video w-full overflow-hidden rounded-2xl border border-zinc-800">
+            <div className="relative mt-12 aspect-video w-full overflow-hidden rounded-sm bg-limestone-deep">
               <Image
                 src={cover}
                 alt={title}
@@ -202,7 +208,7 @@ export default async function WorkPage({ params }: Props) {
               {stack.map((tech) => (
                 <li
                   key={tech}
-                  className="rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1 text-sm text-zinc-300"
+                  className="rounded-sm bg-limestone-deep px-3 py-1 text-base"
                 >
                   {tech}
                 </li>
@@ -217,24 +223,24 @@ export default async function WorkPage({ params }: Props) {
           </div>
 
           {hasContent(hindsight) && (
-            <section className="mt-14 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
-              <h2 className="mb-4 text-xl font-bold text-white">
+            <section className="mt-14 border-l-4 border-majolica bg-limestone-deep p-6 md:p-8">
+              <h2 className="mb-4 font-display text-2xl font-bold tracking-tight">
                 {dict.works.hindsight}
               </h2>
               {documentToReactComponents(hindsight!, articleOptions)}
             </section>
           )}
 
-          <section className="mt-16 rounded-2xl border border-blue-500/30 bg-linear-to-br from-blue-600/20 to-zinc-900 p-8 text-center md:p-10">
-            <h2 className="text-2xl font-bold md:text-3xl">
+          <section className="on-lava mt-16 rounded-sm bg-lava p-8 text-limestone md:p-10">
+            <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
               {dict.works.ctaHeading}
             </h2>
-            <p className="mx-auto mt-3 max-w-md text-zinc-300">
+            <p className="mt-3 max-w-md text-ash">
               {dict.works.ctaBody}
             </p>
             <Link
               href={`${localePath(lang)}#contact`}
-              className="mt-6 inline-block rounded-full bg-white px-8 py-3 text-sm font-bold text-black transition-transform hover:scale-105"
+              className="mt-6 inline-block rounded-sm bg-majolica px-8 py-3.5 font-display font-semibold text-white transition-colors hover:bg-limestone hover:text-lava"
             >
               {dict.works.ctaButton}
             </Link>
@@ -243,18 +249,18 @@ export default async function WorkPage({ params }: Props) {
           {nextWork && (
             <Link
               href={localePath(lang, `/works/${workSlug(nextWork)}`)}
-              className="group mt-10 flex items-center justify-between gap-4 rounded-2xl border border-zinc-800 p-6 transition-colors hover:border-zinc-600"
+              className="group mt-10 flex items-center justify-between gap-4 border-y border-lava/25 py-6 transition-colors hover:text-majolica"
             >
               <span>
-                <span className="block text-xs font-semibold tracking-wider text-zinc-500 uppercase">
+                <span className="block text-basalt">
                   {dict.works.next}
                 </span>
-                <span className="mt-1 block text-lg font-semibold text-white">
+                <span className="mt-1 block font-display text-2xl font-semibold tracking-tight">
                   {nextWork.fields.title}
                 </span>
               </span>
               <ArrowRight
-                className="h-5 w-5 text-zinc-400 transition-transform group-hover:translate-x-1"
+                className="h-5 w-5 transition-transform group-hover:translate-x-1"
                 aria-hidden
               />
             </Link>

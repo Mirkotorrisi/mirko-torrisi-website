@@ -29,7 +29,6 @@ export type Dictionary = {
     ctaSecondary: string;
   };
   services: {
-    eyebrow: string;
     heading: string;
     intro: string;
     examplesLabel: string;
@@ -95,7 +94,6 @@ const en: Dictionary = {
     ctaSecondary: 'See my work',
   },
   services: {
-    eyebrow: 'What I can do for you',
     heading: 'Services',
     intro:
       'From a fast company website to a custom platform or an AI assistant: one developer from the first call to the production release.',
@@ -229,7 +227,6 @@ const it: Dictionary = {
     ctaSecondary: 'Guarda i lavori',
   },
   services: {
-    eyebrow: 'Cosa posso fare per te',
     heading: 'Servizi',
     intro:
       'Dal sito aziendale veloce alla piattaforma su misura o all’assistente AI: un unico sviluppatore dalla prima call alla messa online.',
